@@ -1,5 +1,6 @@
 const dotenv = require('dotenv').config();
-const request = require('request')
+const request = require('request');
+const axios = require('axios');
 const CLIENT = process.env.CLIENT;
 const SECRET = process.env.SECRET;
 const PAYPAL_API_DEV = process.env.PAYPAL_API_DEV;
@@ -7,8 +8,7 @@ const auth = { user: CLIENT, pass : SECRET }
 
 const mainController = {
     //TODO: Crear orden de pago, generar url para el cliente
-    createPayment : (req, res)=>{ 
-        console.log(CLIENT)
+    createPayment : async (req, res)=>{ 
         const body = {
             intent: 'CAPTURE',
             purchase_units:[{
@@ -28,15 +28,14 @@ const mainController = {
                 cancel_url : 'http://localhost:3001/api/cancel-payment'
             }
         }
-        
+
         request.post(`${PAYPAL_API_DEV}/v2/checkout/orders`,{
-                auth,
-                body,
-                json : true
-            }, (err, response) =>{ 
-                res.json({ data: response.body })
-            }
-        )        
+            auth,
+            body,
+            json : true
+        }, (err, response) =>{       
+            res.json({ data: response.body })
+        })      
     },
 
     //TODO: captura el dinero de la trasnaccion
@@ -46,7 +45,9 @@ const mainController = {
                 auth,
                 body: {},
                 json : true
-            }, (err, response) =>{ res.json({ data: response.body })}
+            }, (err, response) =>{
+                res.json({ data: response.body })
+            }
         )
     },
 
