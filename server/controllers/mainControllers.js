@@ -1,19 +1,20 @@
 const dotenv = require('dotenv').config();
 const request = require('request')
-const CLIENT = "Adbtc8CjC4oWmuefe8FZfa9KL3sJzmH6cHQVJ6gXIM7_wn14-Q49u0iIacLhHRrieHx8JMVroXH3TCeP";
-const SECRET = "ELHftDP_Ev98Xa7-2sYbbNakqJR98FxfILXXp5LuWWKpvz6Xyr5ADoeSaZS0HQnf61BGd4yF79zsiFrp";
-const PAYPAL_API_DEV = "https://api-m.sandbox.paypal.com";
+const CLIENT = process.env.CLIENT;
+const SECRET = process.env.SECRET;
+const PAYPAL_API_DEV = process.env.PAYPAL_API_DEV;
 const auth = { user: CLIENT, pass : SECRET }
 
 const mainController = {
     //TODO: Crear orden de pago, generar url para el cliente
     createPayment : (req, res)=>{ 
+        console.log(CLIENT)
         const body = {
             intent: 'CAPTURE',
             purchase_units:[{
                 amount: {
                     currency_code: 'USD',
-                    value: '151'
+                    value: '11'
                 }
             }],
             application_context:{
@@ -27,13 +28,15 @@ const mainController = {
                 cancel_url : 'http://localhost:3001/api/cancel-payment'
             }
         }
-        //https://api-m.sandbox.paypal.com/v2/checkout/orders [post]`          
+        
         request.post(`${PAYPAL_API_DEV}/v2/checkout/orders`,{
                 auth,
                 body,
                 json : true
-            }, (err, response) =>{ res.json({ data: response.body })}
-        )
+            }, (err, response) =>{ 
+                res.json({ data: response.body })
+            }
+        )        
     },
 
     //TODO: captura el dinero de la trasnaccion
@@ -45,6 +48,10 @@ const mainController = {
                 json : true
             }, (err, response) =>{ res.json({ data: response.body })}
         )
+    },
+
+    cancelPayment : (req, res) =>{
+        res.send("Transaccion cancelada")
     }
 }
 
