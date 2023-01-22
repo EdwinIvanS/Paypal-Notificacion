@@ -5,6 +5,7 @@ const CLIENT = process.env.CLIENT;
 const SECRET = process.env.SECRET;
 const PAYPAL_API_DEV = process.env.PAYPAL_API_DEV;
 const auth = { user: CLIENT, pass : SECRET }
+const emailer = require("../config/email")
 
 const mainController = {
     //TODO: Crear orden de pago, generar url para el cliente
@@ -41,6 +42,7 @@ const mainController = {
     //TODO: captura el dinero de la trasnaccion
     executePayment : (req, res) =>{
         const token = req.query.token;
+        emailer.sendMail()
         request.post(`${PAYPAL_API_DEV}/v2/checkout/orders/${token}/capture`,{
                 auth,
                 body: {},
